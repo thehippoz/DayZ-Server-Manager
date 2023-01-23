@@ -1,0 +1,70 @@
+Steam Console Client (c) Valve Corporation - version 1669935972
+-- type 'quit' to exit --
+Loading Steam API...OK
+Logging in user 'budd8works' to Steam Public...src\public\tier1\interface.h (264) : m_pModule
+OK
+Waiting for client config...OK
+Waiting for user info...OK
+Downloading item 2181531192 ...
+Success. Downloaded item 2181531192 to "C:\Program Files (x86)\Steam\steamapps\common\DayZServer\steamcmd\steamapps\workshop\content\221100\2181531192" (1012144 bytes) src\public\tier1\interface.h (264) : m_pModule
+Redirecting stderr to 'C:\Program Files (x86)\Steam\steamapps\common\DayZServer\steamcmd\logs\stderr.txt'
+[  0%] Checking for available updates...
+[----] Verifying installation...
+
+
+
+Robocopy -=-=-=-
+
+
+-------------------------------------------------------------------------------
+   ROBOCOPY     ::     Robust File Copy for Windows                              
+-------------------------------------------------------------------------------
+
+  Started : Thursday, January 19, 2023 6:28:10 PM
+   Source : C:\Program Files (x86)\Steam\steamapps\workshop\content\221100\2181531192\
+     Dest : C:\Program Files(x86)\Steam\steamapps\common\DayZServer\@KillReward\
+
+    Files : *.*
+	    
+  Options : *.* /S /E /DCOPY:DA /COPY:DAT /PURGE /MIR /R:1000000 /W:30 
+
+------------------------------------------------------------------------------
+
+	  New Dir          2	C:\Program Files (x86)\Steam\steamapps\workshop\content\221100\2181531192\
+	    New File  		      98	meta.cpp  0%  100%  
+	    New File  		     516	mod.cpp  0%  100%  
+	  New Dir          4	C:\Program Files (x86)\Steam\steamapps\workshop\content\221100\2181531192\Addons\
+	    New File  		   19928	KillRewarboxfix.pbo  0%  100%  
+	    New File  		     555	KillRewarboxfix.pbo.FS.bisign  0%  100%  
+	    New File  		  979718	KillReward.pbo  0%   26%   53%   80%  100%  
+	    New File  		     555	KillReward.pbo.FS.bisign  0%  100%  
+	  New Dir          1	C:\Program Files (x86)\Steam\steamapps\workshop\content\221100\2181531192\Keys\
+	    New File  		     155	FS.bikey  0%  100%  
+	  New Dir          6	C:\Program Files (x86)\Steam\steamapps\workshop\content\221100\2181531192\KillReward_Config\
+	    New File  		     316	KRBase_Config.json  0%  100%  
+	    New File  		    1671	KRGift_Config.json  0%  100%  
+	    New File  		    4738	KRHunting_Config.json  0%  100%  
+	    New File  		    2077	KRPlayer_Config.json  0%  100%  
+	    New File  		    1225	KRWeponbox_Config.json  0%  100%  
+	    New File  		     592	KRZombie_Config.json  0%  100%  
+
+------------------------------------------------------------------------------
+
+               Total    Copied   Skipped  Mismatch    FAILED    Extras
+    Dirs :         4         4         0         0         0         0
+   Files :        13        13         0         0         0         0
+   Bytes :   988.4 k   988.4 k         0         0         0         0
+   Times :   0:00:00   0:00:00                       0:00:00   0:00:00
+
+
+   Speed :            72296000 Bytes/sec.
+   Speed :            4136.810 MegaBytes/min.
+   Ended : Thursday, January 19, 2023 6:28:10 PM
+
+
+
+
+Copied Keys -=-=-=-
+
+..\@KillReward\Keys\FS.bikey
+        1 file(s) copied.
