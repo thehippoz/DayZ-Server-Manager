@@ -57,7 +57,7 @@ IniRead, DartSayBox, %filePath%, General, DartSayBox
 IniRead, DartSayBoxColor, %filePath%, General, DartSayBoxColor
 IniRead, SpawnPosition, %Mini%, Workshop, SpawnPosition
 
-If (SpawnPosition = "ERROR" || Spawnposition = ","))
+If (SpawnPosition = "ERROR" || Spawnposition = ",")
 SpawnPosition := "0,0"
 
 FoundPos := RegExMatch(SteamWorkshopFolder, "steamapps")
@@ -135,7 +135,7 @@ If (ShutDownDialog = "0,0")
 Loop
 {
 MouseGetPos, msX, msY, msWin, msCtrl
-msnt := "Â» X: " msX " Y: " msY
+msnt := "» X: " msX " Y: " msY
 TMessage(msnt,Handle)
 Sleep, 50
 }
@@ -168,14 +168,14 @@ HourHolder := A_Hour+1
 If (HourHolder = erp)
 ShutCheck=1
 }
-msnt := "Â» Idle"
+msnt := "» Idle"
 TMessage(msnt,Handle)
 
 MinHolder := abs(A_Min)
 
 If ((MinimumStartupTime*60000) < (A_TickCount-StartTime) && (!ShutCheck || (CancelModUp > MinHolder && ShutCheck)) && !ModWait)
 {
-msnt := "Â» Update Checking"
+msnt := "» Update Checking"
 TMessage(msnt,Handle)
 
 chkr := Mee[Raw]
@@ -183,7 +183,7 @@ filePath := "https://steamcommunity.com/sharedfiles/filedetails/changelog/" chkr
 
 If (++Eint >= CheckForUpdatedMods)
 {
-msnt := "Â» Comparing Data"
+msnt := "» Comparing Data"
 TMessage(msnt,Handle)
 Eint=0
 
@@ -217,7 +217,7 @@ If !FileExist(Mini)
 {
 FileAppend, [Workshop]`n, %Mini%
 Sleep, 5
-msnt := "`nÂ» Create - Mod.ini"
+msnt := "`n» Create - Mod.ini"
 TMessage(msnt,Handle)
 }
 KeyB := Mee[Raw]
@@ -245,9 +245,9 @@ If ModWait
 {
 RTicks := (ModWait-A_TickCount)
 If SSFlag
-msnt := "Â» Shutdown Server"
+msnt := "» Shutdown Server"
 else
-msnt := "Â» Updating Mods..."
+msnt := "» Updating Mods..."
 TMessage(msnt,Handle)
 If (RTicks > (ModUpdateWarning*1000))
 {
@@ -328,7 +328,7 @@ FileAppend, `n`n`nRobocopy -=-=-=-`n`n%erp%, ..\profiles\Update-%dVar%-%cVar%-%r
 Send copy /y /v "..\@%dVar%\Keys\*.bikey" "..\keys\" > KeyUpdate-%dVar%-%cVar%.log{Enter}
 Sleep, 500
 FileMove KeyUpdate-%dVar%-%cVar%.log, Keys-%dVar%-%cVar%.log
-While FileExist(KeyUpdate-%dVar%-%cVar%.log)
+While ErrorLevel
 {
 Sleep, 1000
 FileMove KeyUpdate-%dVar%-%cVar%.log, Keys-%dVar%-%cVar%.log
@@ -395,10 +395,10 @@ Sleep, 5000
 }
 else
 {
-msnt := "Â» Restarting Server"
+msnt := "» Restarting Server"
 If SSFlag
 {
-msnt := "Â» Shutdown Server"
+msnt := "» Shutdown Server"
 BlockInput, Off
 }
 TMessage(msnt,Handle)
@@ -443,7 +443,7 @@ Return
 RestartIt:
 ModWait=0
 SSFlag=0
-msnt := "Â» Restarting Server"
+msnt := "» Restarting Server"
 TMessage(msnt,Handle)
 
 Return
