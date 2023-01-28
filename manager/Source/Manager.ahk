@@ -11,6 +11,37 @@ SetBatchLines, -1
 
 ; ########################################################################### !
 
+filePath := A_ScriptDir "\Configure.ini"
+mini := A_ScriptDir "\Mods.ini"
+
+IniRead, ServerName, %filePath%, General, ServerName
+IniRead, SpawnPosition, %mini%, Workshop, SpawnPosition
+Xpos=0
+Ypos=0
+
+If RegExMatch(SubStr(Spawnposition,1,1), "1|2|3|4|5|6|7|8|9|0")
+{
+SPnS := StrSplit(SpawnPosition, ",")
+Xpos := SPnS[1]
+Ypos := SPnS[2]
+}
+
+Menu,Tray,NoStandard
+Menu,Tray,Add,Start,RestartIt
+Menu,Tray,Add,Shutdown,SShutdown
+Menu,Tray,Add,Close,Exit
+Menu,Tray,NoDefault
+Menu,Tray,Icon,running.ico, , 1
+
+exStyles := (WS_EX_COMPOSITED := 0x02000000) | (WS_EX_LAYERED := 0x80000)
+Gui, 3:New, +E%exStyles%
+_Gui_ := A_DefaultGui
+Gui, 3: +AlwaysOnTop +LastFound +ToolWindow
+Gui, 3:Font, s8 c0000EF
+Gui, 3:Add, edit, R1 w140 vPBox hwndHandle, Waiting for DaRT`n
+Gui, 3:Show, x%Xpos% y%Ypos% w159 h33, %ServerName%
+Gui, -SysMenu
+
 Myy := []
 Mee := []
 Mtt := []
@@ -25,19 +56,7 @@ Dllwait=0
 KeptTime=0
 MinimumStartupTime=0
 StartTime := abs(A_TickCount)
-Mini := A_ScriptDir "\Mods.ini"
-filePath := A_ScriptDir "\Configure.ini"
-Menu,Tray,NoStandard
-Menu,Tray,Add,Start,RestartIt
-Menu,Tray,Add,Shutdown,SShutdown
-Menu,Tray,Add,Close,Exit
-Menu,Tray,NoDefault
-Menu,Tray,Icon,running.ico, , 1
 
-pToken := Gdip_Startup()
-OnExit, Exit
-
-IniRead, ServerName, %filePath%, General, ServerName
 IniRead, DayZServer, %filePath%, General, DayZServer
 IniRead, Startup, %filePath%, General, Startup
 IniRead, SteamWorkshopFolder, %filePath%, General, SteamWorkshopFolder
@@ -55,17 +74,12 @@ IniRead, ShutDownDialog, %filePath%, General, ShutDownDialog
 IniRead, MinBeforeShutdown, %filePath%, General, MinBeforeShutdown
 IniRead, DartSayBox, %filePath%, General, DartSayBox
 IniRead, DartSayBoxColor, %filePath%, General, DartSayBoxColor
-IniRead, SpawnPosition, %Mini%, Workshop, SpawnPosition
 
-If (SpawnPosition = "ERROR" || Spawnposition = ",")
-SpawnPosition := "0,0"
+pToken := Gdip_Startup()
+OnExit, Exit
 
 FoundPos := RegExMatch(SteamWorkshopFolder, "steamapps")
 SteamFolder := SubStr(SteamWorkshopFolder,1,FoundPos-1)
-
-SPnS := StrSplit(SpawnPosition, ",")
-Xpos := SPnS[1]
-Ypos := SPnS[2]
 
 If (!index && FileExist(A_ScriptDir "\..\" Startup))
 {
@@ -88,10 +102,6 @@ CancelModUp := (60-(CancelModUp+MinBeforeShutdown))
 TotalMods := index
 Raw := TotalMods
 SSFlag=0
-
-WinWait, ahk_exe %DartName%,
-IfWinNotActive, ahk_exe %DartName%, , WinActivate, ahk_exe %DartName%,
-WinWaitActive, ahk_exe %DartName%,
 
 While Raw
 {
@@ -116,15 +126,6 @@ RcnS := StrSplit(ShutDownDialog, ",")
 XValue := RcnS[1]
 YValue := RcnS[2]
 
-exStyles := (WS_EX_COMPOSITED := 0x02000000) | (WS_EX_LAYERED := 0x80000)
-Gui, 3:New, +E%exStyles%
-_Gui_ := A_DefaultGui
-Gui, 3: +AlwaysOnTop +LastFound +ToolWindow
-Gui, 3:Font, s8 c0000EF
-Gui, 3:Add, edit, xm+0 ym+0 R1 w140 vPBox hwndHandle, Initialize`n
-gif1 := new Gif(filePath, hwndGif1)
-Gui, 3:Show, x%Xpos% y%Ypos% w159 h33, %ServerName%
-Gui, -SysMenu
 CoordMode, Mouse, Screen
 CoordMode, ToolTip, Screen
 
@@ -142,6 +143,10 @@ Sleep, 50
 }
 else
 {
+WinWait, ahk_exe %DartName%,
+IfWinNotActive, ahk_exe %DartName%, , WinActivate, ahk_exe %DartName%,
+WinWaitActive, ahk_exe %DartName%,
+
 Loop
 {
 If ((A_Tickcount-1000) > KeptTime)
@@ -213,18 +218,18 @@ StringReplace, FoundPos, FoundPos, %A_Tab%, , A
 
 Mtt[Raw] := FoundPos
 
-If !FileExist(Mini)
+If !FileExist(mini)
 {
-FileAppend, [Workshop]`n, %Mini%
+FileAppend, [Workshop]`n, %mini%
 Sleep, 5
 msnt := "`n» Create - Mod.ini"
 TMessage(msnt,Handle)
 }
 KeyB := Mee[Raw]
-IniRead, KeyA, %Mini%, Workshop, %KeyB%
+IniRead, KeyA, %mini%, Workshop, %KeyB%
 If (RegExMatch(FoundPos, "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec") && RegExMatch(KeyA, "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec") && FoundPos != KeyA && !ModWait)
 {
-IniWrite, %FoundPos%, %Mini%, Workshop, %KeyB%
+IniWrite, %FoundPos%, %mini%, Workshop, %KeyB%
 ModWait := abs(A_TickCount)
 ModWait += (ModUpdateWarning*1000)
 ModWait += 1500
@@ -232,7 +237,7 @@ ModWait += 1500
 else
 {
 If (KeyA = "ERROR" && RegExMatch(FoundPos, "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec"))
-IniWrite, %FoundPos%, %Mini%, Workshop, %KeyB%
+IniWrite, %FoundPos%, %mini%, Workshop, %KeyB%
 --Raw
 If !Raw
 Raw := TotalMods
@@ -416,11 +421,11 @@ WinKill, ahk_id %cmd_id%,,10
 ModWait=0
 Sleep, (abs(MinBeforeShutdown-MinimumStartupTime)*60000)
 
-If !FileExist(Mini)
-FileAppend, [Workshop]`n, %Mini%
+If !FileExist(mini)
+FileAppend, [Workshop]`n, %mini%
 WinGetPos, Xpos, Ypos,,, %ServerName%
 erp := Xpos "," Ypos
-IniWrite, %erp%, %Mini%, Workshop, SpawnPosition
+IniWrite, %erp%, %mini%, Workshop, SpawnPosition
 Sleep 500
 
 Reload
@@ -449,12 +454,12 @@ TMessage(msnt,Handle)
 Return
 
 Exit:
-If !FileExist(Mini)
-FileAppend, [Workshop]`n, %Mini%
+If !FileExist(mini)
+FileAppend, [Workshop]`n, %mini%
 Sleep, 5
 WinGetPos, Xpos, Ypos,,, %ServerName%
 erp := Xpos "," Ypos
-IniWrite, %erp%, %Mini%, Workshop, SpawnPosition
+IniWrite, %erp%, %mini%, Workshop, SpawnPosition
 
 ExitApp
 
