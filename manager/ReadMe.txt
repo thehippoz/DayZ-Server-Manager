@@ -14,7 +14,7 @@ Extract steamcmd.exe into your \Steam folder. It's probably in \Program Files (x
 
 The manager is setup by editing Configure.ini. You can set a new tray icon for each server by replacing running.ico. If everything is configured correctly in the ini, launch the server and then run Dart, connect. If the rcon is working, run manager and it should handle things from there.
 
-You should update all mods manually before running the first time. The database is created in Mods.ini (delete it and it will be re-created). There are no registry entries made, no api key and UAC isn't needed. You can recompile the ahk but keep the credits. Adding functions to this should be easy to do for those who like to program. The sky's the limit, roaming traders, randomized spawns to keep the playerbase guessing.
+You should update all mods manually before running the first time. The database is created in Mods.ini (delete it and it will be re-created). It works by reading the mods listed in your startup.bat and automatically fetches the id for each mod. No need to make a list of id's. It then creates the database using the last update on steam workshop (this is why the mods should be updated manually before running this the first time). There are no registry entries made, no api key and UAC isn't needed. You can recompile the ahk but keep the credits. Adding functions to this should be easy to do for those who like to program. The sky's the limit, roaming traders, randomized spawns to keep the playerbase guessing.
 
 
 
