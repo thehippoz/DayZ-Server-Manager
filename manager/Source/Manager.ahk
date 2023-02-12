@@ -1,4 +1,5 @@
 ; DZ Server Manager by Ben Barbre (benbarbre@gmail.com) Jan, 2023
+; Update Feb. 12 - Cleaned up and renamed vars. Nothing important.
 
 ; ###########################################################################
 
@@ -16,14 +17,18 @@ mini := A_ScriptDir "\Mods.ini"
 
 IniRead, ServerName, %filePath%, General, ServerName
 IniRead, SpawnPosition, %mini%, Workshop, SpawnPosition
-Xpos=0
-Ypos=0
+
+Myy := []
+Mee := []
+Mtt := []
+Rtt := []
+SDHours := []
 
 If RegExMatch(SubStr(Spawnposition,1,1), "1|2|3|4|5|6|7|8|9|0")
 {
-SPnS := StrSplit(SpawnPosition, ",")
-Xpos := SPnS[1]
-Ypos := SPnS[2]
+Rtt := StrSplit(SpawnPosition, ",")
+Xpos := Rtt[1]
+Ypos := Rtt[2]
 }
 
 Menu,Tray,NoStandard
@@ -41,13 +46,6 @@ Gui, 3:Font, s8 c0000EF
 Gui, 3:Add, edit, R1 w140 vPBox hwndHandle, Waiting for DaRT`n
 Gui, 3:Show, x%Xpos% y%Ypos% w159 h33, %ServerName%
 Gui, -SysMenu
-
-Myy := []
-Mee := []
-Mtt := []
-RcnS := []
-SPnS :=[]
-SDHours := []
 
 Eint=0
 LineVar=0
@@ -122,9 +120,9 @@ SDHours[index] := FoundPos
 }
 Hoursin := index
 
-RcnS := StrSplit(ShutDownDialog, ",")
-XValue := RcnS[1]
-YValue := RcnS[2]
+Rtt := StrSplit(ShutDownDialog, ",")
+XValue := Rtt[1]
+YValue := Rtt[2]
 
 CoordMode, Mouse, Screen
 CoordMode, ToolTip, Screen
@@ -211,9 +209,9 @@ hObject:=ComObjCreate("WinHttp.WinHttpRequest.5.1")
 ComObjError(false)
 hObject.Open("GET",filePath)
 hObject.Send()
-aad:=hObject.ResponseText
-LineVar := InStr(aad, "changelog headline")
-FoundPos := SubStr(aad,LineVar+37,20)
+Foundhead:=hObject.ResponseText
+LineVar := InStr(Foundhead, "changelog headline")
+FoundPos := SubStr(Foundhead,LineVar+37,20)
 StringReplace, FoundPos, FoundPos, %A_Tab%, , A
 
 Mtt[Raw] := FoundPos
