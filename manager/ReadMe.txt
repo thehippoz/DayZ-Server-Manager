@@ -24,7 +24,7 @@ Configure.ini
 
 -=-=-=-=-=-=-=-=-=--=--=-=-=-=-
 
-ServerName - The name of your current map or whatever you want to put in here. It's the titlebar of the manager so you can run multiple servers with different titles and tray icons using running.ico. Example: Deer Isle. If you do run multiple, make a Dart copy and rename Dart.exe for each server run. Change the DartName field below in each copy of manager. Multiple servers is untested and I do see conflicts happening with rcon being used at the same time, or a mod being updated at the same time. That's what's great about open source, I'm sure someone could fix it.
+ServerName - The name of your current map or whatever you want to put in here. It's the titlebar of the manager so you can run multiple servers with different titles and tray icons using running.ico. Example: Deer Isle. If you do run multiple, make a Dart copy and rename Dart.exe for each server run. Change the DartName field below in each copy of manager. Multiple servers are untested and I see conflicts happening with rcon being used at the same time, or a mod being updated at the same time. That's what's great about Autohotkey, I'm sure someone could fix if I don't get around to it.
 
 DayZServer - Path to the root of your server. Example: C:\Program Files (x86)\Steam\steamapps\common\DayZServer\
 
