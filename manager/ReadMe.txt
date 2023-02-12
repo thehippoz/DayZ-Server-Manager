@@ -14,7 +14,7 @@ Extract steamcmd.exe into your \Steam folder. It's probably in \Program Files (x
 
 The manager is setup by editing Configure.ini. You can set a new tray icon for each server by replacing running.ico. If everything is configured correctly in the ini, launch the server and then run Dart, connect. If the rcon is working, run manager and it should handle things from there.
 
-You should update all mods manually before running the first time. The database is created in Mods.ini (delete it and it will be recreated). There are no registry entries made, no api key and UAC isn't needed. You can recompile the ahk but keep the credits. Adding functions to this should be easy to do for those who like to program. The sky's the limit, roaming traders, randomized spawns to keep the playerbase guessing.
+You should update all mods manually before running the first time. The database is created in Mods.ini (delete it and it will be re-created). There are no registry entries made, no api key and UAC isn't needed. You can recompile the ahk but keep the credits. Adding functions to this should be easy to do for those who like to program. The sky's the limit, roaming traders, randomized spawns to keep the playerbase guessing.
 
 
 
@@ -79,7 +79,7 @@ You could run remote software like Teamviewer instead. It allows both the server
 
 Have fun with it. You can try omega manager too. It seems that's where all the redditors are but has the same problem, closed source and you can't add your own code to expand your server like roaming traders without the need for AI or randomizing enemy spawns between restarts. Sky's the limit really. Manager stores its mod update logs in \profiles.
 
-To do: There is currently a thing where mods aren't recorded as updated with the current year on steam. So if the year rolls over, it will trigger an update on all mods updated last year. The workaround currently is to delete the mods.ini on Jan 1st. I will probably fix this in a future update. There is also an issue if you forget to connect Dart to the server, it will end up looping trying to find an active box for rcon. I might add a connect x,y for this in a future update too.
+To do: There is currently a thing where mods aren't recorded as updated with the current year on steam. So if the year rolls over, it will trigger an update on all mods updated last year. The workaround currently is to delete the mods.ini on Jan 1st. I will probably fix this in a future update. There is also an issue if you forget to connect Dart to the server, it will end up looping trying to find an active box for rcon.
 
 Credits
 
