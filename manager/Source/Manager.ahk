@@ -1,4 +1,5 @@
 ; DZ Server Manager by Ben Barbre (benbarbre@gmail.com) Jan, 2023
+; Update Feb. 15 - Added some checks to make sure an update as happened before writing them in mod.ini. Fixed a bug in mod.ini.
 ; Update Feb. 12 - Cleaned up and renamed vars. Nothing important.
 
 ; ###########################################################################
@@ -136,7 +137,7 @@ If (ShutDownDialog = "0,0")
 Loop
 {
 MouseGetPos, msX, msY, msWin, msCtrl
-msnt := "» X: " msX " Y: " msY
+msnt := "Â» X: " msX " Y: " msY
 TMessage(msnt,Handle)
 Sleep, 50
 }
@@ -173,14 +174,14 @@ HourHolder := A_Hour+1
 If (HourHolder = erp)
 ShutCheck=1
 }
-msnt := "» Idle"
+msnt := "Â» Idle"
 TMessage(msnt,Handle)
 
 MinHolder := abs(A_Min)
 
 If ((MinimumStartupTime*60000) < (A_TickCount-StartTime) && (!ShutCheck || (CancelModUp > MinHolder && ShutCheck)) && !ModWait)
 {
-msnt := "» Update Checking"
+msnt := "Â» Update Checking"
 TMessage(msnt,Handle)
 
 chkr := Mee[Raw]
@@ -188,7 +189,7 @@ filePath := "https://steamcommunity.com/sharedfiles/filedetails/changelog/" chkr
 
 If (++Eint >= CheckForUpdatedMods)
 {
-msnt := "» Comparing Data"
+msnt := "Â» Comparing Data"
 TMessage(msnt,Handle)
 Eint=0
 
@@ -232,7 +233,7 @@ If !FileExist(mini)
 {
 FileAppend, [Workshop]`n, %mini%
 Sleep, 5
-msnt := "`n» Create - Mod.ini"
+msnt := "`nÂ» Create - Mod.ini"
 TMessage(msnt,Handle)
 }
 KeyB := Mee[Raw]
@@ -260,9 +261,9 @@ If ModWait
 {
 RTicks := (ModWait-A_TickCount)
 If SSFlag
-msnt := "» Shutdown Server"
+msnt := "Â» Shutdown Server"
 else
-msnt := "» Updating Mods..."
+msnt := "Â» Updating Mods..."
 TMessage(msnt,Handle)
 If (RTicks > (ModUpdateWarning*1000))
 {
@@ -418,10 +419,10 @@ Sleep, 5000
 }
 else
 {
-msnt := "» Restarting Server"
+msnt := "Â» Restarting Server"
 If SSFlag
 {
-msnt := "» Shutdown Server"
+msnt := "Â» Shutdown Server"
 BlockInput, Off
 }
 TMessage(msnt,Handle)
@@ -466,7 +467,7 @@ Return
 RestartIt:
 ModWait=0
 SSFlag=0
-msnt := "» Restarting Server"
+msnt := "Â» Restarting Server"
 TMessage(msnt,Handle)
 
 Return
