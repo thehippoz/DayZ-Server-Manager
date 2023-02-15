@@ -14,7 +14,7 @@ Extract steamcmd.exe into your \Steam folder. It's probably in \Program Files (x
 
 The manager is setup by editing Configure.ini. You can set a new tray icon for each server by replacing running.ico. If everything is configured correctly in the ini, launch the server and then run Dart, connect. If the rcon is working, run manager and it should handle things from there.
 
-You should update all mods manually before running the first time. The database is created in Mods.ini (delete it and it will be re-created). It works by reading the mods listed in your startup.bat and automatically fetches the id for each mod. No need to make a list of id's. It then creates the database using the last update on steam workshop (this is why mods should be updated manually before running this the first time). There are no registry entries made, no api key and UAC isn't needed. You can recompile the ahk but keep the credits. Adding functions to this should be easy to do for those who like to program. The sky's the limit, roaming traders, randomized spawns to keep the playerbase guessing.
+You should update all mods manually before running the first time. The database is created in Mods.ini (delete it and it will be re-created). It works by reading the mods listed in your startup.bat and automatically fetches the id for each mod. No need to make a list of id's. It then creates the database using the last update on steam workshop (this is why mods should be updated manually before running this). There are no registry entries made, no api key and UAC isn't needed. You can recompile the ahk but keep the credits. Adding functions to this should be easy to do for those who like to program. The sky's the limit, roaming traders, randomized spawns to keep the playerbase guessing.
 
 
 
@@ -56,7 +56,7 @@ MessageUpdatedMods - The message sent during an update. #mod# is substituted for
 
 ShutDownDialog - It's the position of the error button used to close out DayZ when the server crashes on restart. Use the manager to hover over this button and get the x,y coordinates when set to 0,0. Will vary depending on the screen resolution. Example: 502,384
 
-DartSayBox - Manager uses a technique to scan pixels on the screen. It uses the color of the line around the send box in DaRT to determine if it's ready for input. It does this by scanning vertically from this x,y value and looks for blue outline (win10/server). Hover on, or just below the grey line above the say box within 10 pixels of the blue when active and enter the value here. Example: 300,700
+DartSayBox - Manager uses a technique to scan pixels on the screen. It uses the color of the line around the send box in DaRT to determine if it's ready for input. It does this by scanning vertically from this x,y value and looks for the blue outline (win10/server). Hover on, or just below the grey line above the say box within 10 pixels of the blue when active and enter the value here. Example: 300,700
 
 DartSayBoxColor - This is the hex color used to determine if the say box is ready for input. There are a couple of debug files Manager generates for help in finding the value in the manager folder > Pos.png and HexColorsFound.txt  Example: 78D700
 
@@ -79,7 +79,7 @@ You could run remote software like Teamviewer instead. It allows both the server
 
 Have fun with it. You can try omega manager too. It seems that's where all the redditors are but has the same problem, closed source and you can't add your own code to expand your server like roaming traders without the need for AI or randomizing enemy spawns between restarts. Sky's the limit really. Manager stores its mod update logs in \profiles.
 
-To do: There is currently a thing where mods aren't recorded as updated with the current year on steam. So if the year rolls over, it will trigger an update on all mods updated last year. The workaround currently is to delete the mods.ini on Jan 1st. I will probably fix this in a future update. There is also an issue if you forget to connect Dart to the server, it will end up looping trying to find an active box for rcon.
+To do: There is currently a thing where mods aren't recorded as updated with the current year on steam. So if the year rolls over, it will trigger an update on all mods updated last year. The workaround currently is to delete the mods.ini on Jan 1st. I will probably fix this in a future update <Fixed Feb. 15>. There is also an issue if you forget to connect Dart to the server, it will end up looping trying to find an active box for rcon.
 
 Credits
 
