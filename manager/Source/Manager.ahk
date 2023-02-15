@@ -1,5 +1,5 @@
 ; DZ Server Manager by Ben Barbre (benbarbre@gmail.com) Jan, 2023
-; Update Feb. 15 - Added some checks to make sure an update as happened before writing them in mod.ini. Fixed a bug in mod.ini.
+; Update Feb. 15 - Added some checks to make sure an update as happened before writing them in mod.ini. Fixed the date bug in mod.ini.
 ; Update Feb. 12 - Cleaned up and renamed vars. Nothing important.
 
 ; ###########################################################################
