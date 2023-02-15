@@ -23,6 +23,8 @@ Mee := []
 Mtt := []
 Rtt := []
 SDHours := []
+Xpos=0
+Ypos=0
 
 If RegExMatch(SubStr(Spawnposition,1,1), "1|2|3|4|5|6|7|8|9|0")
 {
@@ -195,9 +197,12 @@ If (abs(A_TimeIdle) > 270000)
 DaRT(DartName,DartSayBox,DartSayBoxColor,0)
 Sleep, 100
 WinMinimize, ahk_exe %DartName%
+ifWinExist, ahk_exe DayZServer_x64.exe
+{
 WinWait, ahk_exe DayZServer_x64.exe,
 IfWinNotActive, ahk_exe DayZServer_x64.exe, , WinActivate, ahk_exe DayZServer_x64.exe,
 WinWaitActive, ahk_exe DayZServer_x64.exe,
+}
 Sleep, 100
 MouseClick, left,  XValue, YValue
 Sleep, 100
@@ -213,7 +218,14 @@ Foundhead:=hObject.ResponseText
 LineVar := InStr(Foundhead, "changelog headline")
 FoundPos := SubStr(Foundhead,LineVar+37,20)
 StringReplace, FoundPos, FoundPos, %A_Tab%, , A
-
+Rtt := StrSplit(FoundPos, ",")
+If (Rtt[1] = FoundPos)
+{
+Rtt := StrSplit(FoundPos, "@")
+Mtt[Raw] := SubStr(Rtt[1],1,StrLen(Rtt[1])-1)
+Mtt[Raw] := Mtt[Raw] ", " A_YYYY " @ " Rtt[2]
+}
+else
 Mtt[Raw] := FoundPos
 
 If !FileExist(mini)
@@ -227,7 +239,7 @@ KeyB := Mee[Raw]
 IniRead, KeyA, %mini%, Workshop, %KeyB%
 If (RegExMatch(FoundPos, "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec") && RegExMatch(KeyA, "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec") && FoundPos != KeyA && !ModWait)
 {
-IniWrite, %FoundPos%, %mini%, Workshop, %KeyB%
+; IniWrite, %FoundPos%, %mini%, Workshop, %KeyB%
 ModWait := abs(A_TickCount)
 ModWait += (ModUpdateWarning*1000)
 ModWait += 1500
@@ -290,6 +302,8 @@ If (RTicks < 1)
 DaRT(DartName,DartSayBox,DartSayBoxColor,1)
 Sleep, 100
 WinMinimize, ahk_exe %DartName%
+ifWinExist, ahk_exe DayZServer_x64.exe
+{
 WinWait, ahk_exe DayZServer_x64.exe,
 IfWinNotActive, ahk_exe DayZServer_x64.exe, , WinActivate, ahk_exe DayZServer_x64.exe,
 WinWaitActive, ahk_exe DayZServer_x64.exe,
@@ -300,6 +314,7 @@ MouseMove,  XValue, YValue
 Sleep, 50
 MouseClick, left,  XValue, YValue
 Sleep, 5000
+}
 cVar := Mee[Raw]
 dVar := SubStr(Myy[Raw],2,StrLen(Myy[Raw])-1)
 If !SSFlag
@@ -327,6 +342,8 @@ FileMove RoboUpdate-%dVar%-%cVar%.log, Robocopy-%dVar%-%cVar%.log
 }
 Sleep, 500
 FileRead, erp, Robocopy-%dVar%-%cVar%.log
+If (RegExMatch(erp, "Newer"))
+IniWrite, %FoundPos%, %mini%, Workshop, %KeyB%
 FileAppend, `n`n`nRobocopy -=-=-=-`n`n%erp%, ..\profiles\Update-%dVar%-%cVar%-%rgs%.log
 Send copy /y /v "..\@%dVar%\Keys\*.bikey" "..\keys\" > KeyUpdate-%dVar%-%cVar%.log{Enter}
 Sleep, 500
@@ -379,6 +396,8 @@ BlockInput, Off
 If RTicks < 1
 {
 WinMinimize, ahk_exe %DartName%
+ifWinExist, ahk_exe DayZServer_x64.exe
+{
 WinWait, ahk_exe DayZServer_x64.exe,
 IfWinNotActive, ahk_exe DayZServer_x64.exe, , WinActivate, ahk_exe DayZServer_x64.exe,
 WinWaitActive, ahk_exe DayZServer_x64.exe,
@@ -391,6 +410,7 @@ MouseClick, left,  XValue, YValue
 Sleep, 100
 WinMaximize, ahk_exe %DartName%
 Sleep, 5000
+}
 }
 }
 }
