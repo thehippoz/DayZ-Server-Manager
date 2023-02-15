@@ -1,5 +1,5 @@
 ; DZ Server Manager by Ben Barbre (benbarbre@gmail.com) Jan, 2023
-; Update Feb. 15 - Added some checks to make sure an update as happened before writing them in mod.ini. Fixed the date bug in mod.ini.
+; Update Feb. 15 - Fixed date bug in mod.ini.
 ; Update Feb. 12 - Cleaned up and renamed vars. Nothing important.
 
 ; ###########################################################################
@@ -137,7 +137,7 @@ If (ShutDownDialog = "0,0")
 Loop
 {
 MouseGetPos, msX, msY, msWin, msCtrl
-msnt := "Â» X: " msX " Y: " msY
+msnt := "» X: " msX " Y: " msY
 TMessage(msnt,Handle)
 Sleep, 50
 }
@@ -174,14 +174,14 @@ HourHolder := A_Hour+1
 If (HourHolder = erp)
 ShutCheck=1
 }
-msnt := "Â» Idle"
+msnt := "» Idle"
 TMessage(msnt,Handle)
 
 MinHolder := abs(A_Min)
 
 If ((MinimumStartupTime*60000) < (A_TickCount-StartTime) && (!ShutCheck || (CancelModUp > MinHolder && ShutCheck)) && !ModWait)
 {
-msnt := "Â» Update Checking"
+msnt := "» Update Checking"
 TMessage(msnt,Handle)
 
 chkr := Mee[Raw]
@@ -189,7 +189,7 @@ filePath := "https://steamcommunity.com/sharedfiles/filedetails/changelog/" chkr
 
 If (++Eint >= CheckForUpdatedMods)
 {
-msnt := "Â» Comparing Data"
+msnt := "» Comparing Data"
 TMessage(msnt,Handle)
 Eint=0
 
@@ -224,23 +224,23 @@ If (Rtt[1] = FoundPos)
 {
 Rtt := StrSplit(FoundPos, "@")
 Mtt[Raw] := SubStr(Rtt[1],1,StrLen(Rtt[1])-1)
-Mtt[Raw] := Mtt[Raw] ", " A_YYYY " @ " Rtt[2]
+Mtt[Raw] := Mtt[Raw] ", " A_YYYY " @" Rtt[2]
+FoundPos := Mtt[Raw]
 }
 else
 Mtt[Raw] := FoundPos
 
 If !FileExist(mini)
 {
-FileAppend, [Workshop]`n, %mini%
+FileAppend, [Workshop]`nSpawnPosition=`n, %mini%
 Sleep, 5
-msnt := "`nÂ» Create - Mod.ini"
+msnt := "`n» Create - Mod.ini"
 TMessage(msnt,Handle)
 }
 KeyB := Mee[Raw]
 IniRead, KeyA, %mini%, Workshop, %KeyB%
 If (RegExMatch(FoundPos, "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec") && RegExMatch(KeyA, "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec") && FoundPos != KeyA && !ModWait)
 {
-; IniWrite, %FoundPos%, %mini%, Workshop, %KeyB%
 ModWait := abs(A_TickCount)
 ModWait += (ModUpdateWarning*1000)
 ModWait += 1500
@@ -261,9 +261,9 @@ If ModWait
 {
 RTicks := (ModWait-A_TickCount)
 If SSFlag
-msnt := "Â» Shutdown Server"
+msnt := "» Shutdown Server"
 else
-msnt := "Â» Updating Mods..."
+msnt := "» Updating Mods..."
 TMessage(msnt,Handle)
 If (RTicks > (ModUpdateWarning*1000))
 {
@@ -419,10 +419,10 @@ Sleep, 5000
 }
 else
 {
-msnt := "Â» Restarting Server"
+msnt := "» Restarting Server"
 If SSFlag
 {
-msnt := "Â» Shutdown Server"
+msnt := "» Shutdown Server"
 BlockInput, Off
 }
 TMessage(msnt,Handle)
@@ -467,7 +467,7 @@ Return
 RestartIt:
 ModWait=0
 SSFlag=0
-msnt := "Â» Restarting Server"
+msnt := "» Restarting Server"
 TMessage(msnt,Handle)
 
 Return
