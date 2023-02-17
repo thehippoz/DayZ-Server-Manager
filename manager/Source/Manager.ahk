@@ -1,6 +1,7 @@
 ; DZ Server Manager by Ben Barbre (benbarbre@gmail.com) Jan, 2023
-; Update Feb. 15 - Fixed date bug in mod.ini. Moved some things around for reliability.
-; Update Feb. 12 - Cleaned up and renamed vars. Nothing important.
+; Update Feb 16 - Fixed a problem logging a mod with spaces.
+; Update Feb 15 - Fixed date bug in mod.ini. Moved some things around for reliability.
+; Update Feb 12 - Cleaned up and renamed vars. Nothing important.
 
 ; ###########################################################################
 
@@ -137,7 +138,7 @@ If (ShutDownDialog = "0,0")
 Loop
 {
 MouseGetPos, msX, msY, msWin, msCtrl
-msnt := "Â» X: " msX " Y: " msY
+msnt := "» X: " msX " Y: " msY
 TMessage(msnt,Handle)
 Sleep, 50
 }
@@ -174,14 +175,14 @@ HourHolder := A_Hour+1
 If (HourHolder = erp)
 ShutCheck=1
 }
-msnt := "Â» Idle"
+msnt := "» Idle"
 TMessage(msnt,Handle)
 
 MinHolder := abs(A_Min)
 
 If ((MinimumStartupTime*60000) < (A_TickCount-StartTime) && (!ShutCheck || (CancelModUp > MinHolder && ShutCheck)) && !ModWait)
 {
-msnt := "Â» Update Checking"
+msnt := "» Update Checking"
 TMessage(msnt,Handle)
 
 chkr := Mee[Raw]
@@ -189,7 +190,7 @@ filePath := "https://steamcommunity.com/sharedfiles/filedetails/changelog/" chkr
 
 If (++Eint >= CheckForUpdatedMods)
 {
-msnt := "Â» Comparing Data"
+msnt := "» Comparing Data"
 TMessage(msnt,Handle)
 Eint=0
 
@@ -234,7 +235,7 @@ If !FileExist(mini)
 {
 FileAppend, [Workshop]`nSpawnPosition=`n, %mini%
 Sleep, 5
-msnt := "`nÂ» Create - Mod.ini"
+msnt := "`n» Create - Mod.ini"
 TMessage(msnt,Handle)
 }
 KeyB := Mee[Raw]
@@ -261,9 +262,9 @@ If ModWait
 {
 RTicks := (ModWait-A_TickCount)
 If SSFlag
-msnt := "Â» Shutdown Server"
+msnt := "» Shutdown Server"
 else
-msnt := "Â» Updating Mods..."
+msnt := "» Updating Mods..."
 TMessage(msnt,Handle)
 If (RTicks > (ModUpdateWarning*1000))
 {
@@ -321,6 +322,8 @@ dVar := SubStr(Myy[Raw],2,StrLen(Myy[Raw])-1)
 If !SSFlag
 {
 SetWorkingDir, %SteamFolder%
+dVarS := dVar
+dVar := StrReplace(dVar, " ", "_")
 FileName := "ModUpdate-" dVar "-" cVar ".log"
 Sleep, 50
 RunWait, "C:\Windows\System32\cmd.exe" /c steamcmd +login %Steamuser% +workshop_download_item 221100 %cVar% +quit > %FileName%, %SteamFolder%
@@ -333,7 +336,7 @@ Sleep, 500
 WinGet, cmd_id, ID, A
 Send move /Y "%SteamFolder%%FileName%" "..\profiles\Update-%dVar%-%cVar%-%rgs%.log"{Enter}
 Sleep, 500
-Send robocopy "%SteamWorkshopFolder%%cVar%" "..\@%dVar%" /mir > RoboUpdate-%dVar%-%cVar%.log{Enter}
+Send robocopy "%SteamWorkshopFolder%%cVar%" "..\@%dVarS%" /mir > RoboUpdate-%dVar%-%cVar%.log{Enter}
 Sleep, 500
 FileMove RoboUpdate-%dVar%-%cVar%.log, Robocopy-%dVar%-%cVar%.log
 While ErrorLevel
@@ -343,10 +346,10 @@ FileMove RoboUpdate-%dVar%-%cVar%.log, Robocopy-%dVar%-%cVar%.log
 }
 Sleep, 500
 FileRead, erp, Robocopy-%dVar%-%cVar%.log
-If (RegExMatch(erp, "Newer"))
+If (RegExMatch(erp, "New"))
 IniWrite, %FoundPos%, %mini%, Workshop, %KeyB%
 FileAppend, `n`n`nRobocopy -=-=-=-`n`n%erp%, ..\profiles\Update-%dVar%-%cVar%-%rgs%.log
-Send copy /y /v "..\@%dVar%\Keys\*.bikey" "..\keys\" > KeyUpdate-%dVar%-%cVar%.log{Enter}
+Send copy /y /v "..\@%dVarS%\Keys\*.bikey" "..\keys\" > KeyUpdate-%dVar%-%cVar%.log{Enter}
 Sleep, 500
 FileMove KeyUpdate-%dVar%-%cVar%.log, Keys-%dVar%-%cVar%.log
 While ErrorLevel
@@ -419,10 +422,10 @@ Sleep, 5000
 }
 else
 {
-msnt := "Â» Restarting Server"
+msnt := "» Restarting Server"
 If SSFlag
 {
-msnt := "Â» Shutdown Server"
+msnt := "» Shutdown Server"
 BlockInput, Off
 }
 TMessage(msnt,Handle)
@@ -467,7 +470,7 @@ Return
 RestartIt:
 ModWait=0
 SSFlag=0
-msnt := "Â» Restarting Server"
+msnt := "» Restarting Server"
 TMessage(msnt,Handle)
 
 Return
