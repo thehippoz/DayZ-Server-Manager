@@ -1,6 +1,7 @@
 ; DZ Server Manager by Ben Barbre (benbarbre@gmail.com) Jan, 2023
-; Update Feb 16 - Fixed a problem logging mods with spaces. Works with 1.20 update.
-; Update Feb 15 - Fixed date bug in mod.ini. Moved some things around for reliability.
+; Update Feb 27 - Fixed a bug in update and a time sync issue.
+; Update Feb 16 - Fixed a problem logging mods with spaces. Works with 1.20
+; Update Feb 15 - Fixed date bug in mod.ini. Moved some things around.
 ; Update Feb 12 - Cleaned up and renamed vars. Nothing important.
 
 ; ###########################################################################
@@ -59,6 +60,8 @@ KeptTime=0
 MinimumStartupTime=0
 StartTime := abs(A_TickCount)
 
+aMonth := "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec"
+
 IniRead, DayZServer, %filePath%, General, DayZServer
 IniRead, Startup, %filePath%, General, Startup
 IniRead, SteamWorkshopFolder, %filePath%, General, SteamWorkshopFolder
@@ -75,6 +78,7 @@ IniRead, MessageUpdatedMods, %filePath%, General, MessageUpdatedMods
 IniRead, ShutDownDialog, %filePath%, General, ShutDownDialog
 IniRead, MinBeforeShutdown, %filePath%, General, MinBeforeShutdown
 IniRead, DartSayBox, %filePath%, General, DartSayBox
+IniRead, DartConnectButton, %filePath%, General, DartConnectButton
 IniRead, DartSayBoxColor, %filePath%, General, DartSayBoxColor
 
 pToken := Gdip_Startup()
@@ -125,8 +129,8 @@ SDHours[index] := FoundPos
 Hoursin := index
 
 Rtt := StrSplit(ShutDownDialog, ",")
-XValue := Rtt[1]
-YValue := Rtt[2]
+Xsdd := Rtt[1]
+Ysdd := Rtt[2]
 
 CoordMode, Mouse, Screen
 CoordMode, ToolTip, Screen
@@ -138,7 +142,7 @@ If (ShutDownDialog = "0,0")
 Loop
 {
 MouseGetPos, msX, msY, msWin, msCtrl
-msnt := "Â» X: " msX " Y: " msY
+msnt := "» X: " msX " Y: " msY
 TMessage(msnt,Handle)
 Sleep, 50
 }
@@ -161,8 +165,7 @@ Dllwait=0
 DllCall("SetThreadExecutionState", UInt,0x80000003 )
 }
 KeptTime := abs(A_TickCount)
-ServerLoc := "DayZServer_x64.exe"
-Process, Exist, %ServerLoc%
+Process, Exist, DayZServer_x64.exe
 
 If (ErrorLevel || (MinimumStartupTime*60000) > (A_TickCount-StartTime))
 {
@@ -175,14 +178,14 @@ HourHolder := A_Hour+1
 If (HourHolder = erp)
 ShutCheck=1
 }
-msnt := "Â» Idle"
+msnt := "» Idle"
 TMessage(msnt,Handle)
 
 MinHolder := abs(A_Min)
 
 If ((MinimumStartupTime*60000) < (A_TickCount-StartTime) && (!ShutCheck || (CancelModUp > MinHolder && ShutCheck)) && !ModWait)
 {
-msnt := "Â» Update Checking"
+msnt := "» Update Checking"
 TMessage(msnt,Handle)
 
 chkr := Mee[Raw]
@@ -190,13 +193,13 @@ filePath := "https://steamcommunity.com/sharedfiles/filedetails/changelog/" chkr
 
 If (++Eint >= CheckForUpdatedMods)
 {
-msnt := "Â» Comparing Data"
+msnt := "» Comparing Data"
 TMessage(msnt,Handle)
 Eint=0
 
 If (abs(A_TimeIdle) > 270000)
 {
-DaRT(DartName,DartSayBox,DartSayBoxColor,0)
+DaRT(DartName,DartSayBox,DartConnectButton,DartSayBoxColor,0)
 Sleep, 100
 WinMinimize, ahk_exe %DartName%
 ifWinExist, ahk_exe DayZServer_x64.exe
@@ -206,7 +209,7 @@ IfWinNotActive, ahk_exe DayZServer_x64.exe, , WinActivate, ahk_exe DayZServer_x6
 WinWaitActive, ahk_exe DayZServer_x64.exe,
 }
 Sleep, 100
-MouseClick, left,  XValue, YValue
+MouseClick, left,  Xsdd, Ysdd
 Sleep, 100
 WinMaximize, ahk_exe %DartName%
 BlockInput, Off
@@ -235,20 +238,20 @@ If !FileExist(mini)
 {
 FileAppend, [Workshop]`nSpawnPosition=`n, %mini%
 Sleep, 5
-msnt := "`nÂ» Create - Mod.ini"
+msnt := "`n» Create - Mod.ini"
 TMessage(msnt,Handle)
 }
 KeyB := Mee[Raw]
 IniRead, KeyA, %mini%, Workshop, %KeyB%
-If (RegExMatch(FoundPos, "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec") && RegExMatch(KeyA, "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec") && FoundPos != KeyA && !ModWait)
+If (RegExMatch(FoundPos, aMonth) && RegExMatch(KeyA, aMonth) && FoundPos != KeyA && !ModWait)
 {
 ModWait := abs(A_TickCount)
 ModWait += (ModUpdateWarning*1000)
-ModWait += 1500
+ModWait += 8500
 }
 else
 {
-If (KeyA = "ERROR" && RegExMatch(FoundPos, "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec"))
+If (KeyA = "ERROR" && RegExMatch(FoundPos, aMonth))
 IniWrite, %FoundPos%, %mini%, Workshop, %KeyB%
 --Raw
 If !Raw
@@ -262,13 +265,13 @@ If ModWait
 {
 RTicks := (ModWait-A_TickCount)
 If SSFlag
-msnt := "Â» Shutdown Server"
+msnt := "» Shutdown Server"
 else
-msnt := "Â» Updating Mods..."
+msnt := "» Updating Mods..."
 TMessage(msnt,Handle)
-If (RTicks > (ModUpdateWarning*1000))
+If (RTicks > (ModUpdateWarning*1000)+7000)
 {
-DaRT(DartName,DartSayBox,DartSayBoxColor,1)
+DaRT(DartName,DartSayBox,DartConnectButton,DartSayBoxColor,1)
 dVar := SubStr(Myy[Raw],2,StrLen(Myy[Raw])-1)
 cVar := "#mod#"
 erp := StrReplace(MessageUpdatedMods, cVar, dVar)
@@ -281,9 +284,9 @@ Send %erp%{Enter}
 Sleep, 1500
 BlockInput, Off
 }
-If (RTicks < (CountdownSeconds*1000) && CurrentM != Round(Floor(RTicks/1000), -1))
+If (RTicks < (CountdownSeconds*1000)+5000 && CurrentM != Round(Floor(RTicks/1000), -1))
 {
-DaRT(DartName,DartSayBox,DartSayBoxColor,1)
+DaRT(DartName,DartSayBox,DartConnectButton,DartSayBoxColor,1)
 dVar := SubStr(Myy[Raw],2,StrLen(Myy[Raw])-1)
 cVar := "#mod#"
 erp := StrReplace(MessageUpdatedMods, cVar, dVar)
@@ -299,9 +302,9 @@ Send %erp%{Enter}
 Sleep, 100
 BlockInput, Off
 }
-If (RTicks < 1)
+If (RTicks < 5000)
 {
-DaRT(DartName,DartSayBox,DartSayBoxColor,1)
+DaRT(DartName,DartSayBox,DartConnectButton,DartSayBoxColor,1)
 Sleep, 100
 WinMinimize, ahk_exe %DartName%
 ifWinExist, ahk_exe DayZServer_x64.exe
@@ -312,9 +315,9 @@ WinWaitActive, ahk_exe DayZServer_x64.exe,
 WinGet, ffs_id, ID, A
 WinKill, ahk_id %ffs_id%,,10
 Sleep, 15000
-MouseMove,  XValue, YValue
+MouseMove,  Xsdd, Ysdd
 Sleep, 50
-MouseClick, left,  XValue, YValue
+MouseClick, left,  Xsdd, Ysdd
 Sleep, 5000
 }
 cVar := Mee[Raw]
@@ -329,7 +332,10 @@ Sleep, 50
 RunWait, "C:\Windows\System32\cmd.exe" /c steamcmd +login %Steamuser% +workshop_download_item 221100 %cVar% +quit > %FileName%, %SteamFolder%
 Random, rgs, 1000, 9999
 Sleep, 500
+FileRead, erp, %FileName%
 SetWorkingDir, %A_ScriptDir%
+If (RegExMatch(erp, "Success."))
+IniWrite, %FoundPos%, %mini%, Workshop, %KeyB%
 Sleep, 500
 Run, "C:\Windows\System32\cmd.exe"
 Sleep, 500
@@ -345,9 +351,6 @@ Sleep, 1000
 FileMove RoboUpdate-%dVar%-%cVar%.log, Robocopy-%dVar%-%cVar%.log
 }
 Sleep, 500
-FileRead, erp, Robocopy-%dVar%-%cVar%.log
-If (RegExMatch(erp, "New"))
-IniWrite, %FoundPos%, %mini%, Workshop, %KeyB%
 FileAppend, `n`n`nRobocopy -=-=-=-`n`n%erp%, ..\profiles\Update-%dVar%-%cVar%-%rgs%.log
 Send copy /y /v "..\@%dVarS%\Keys\*.bikey" "..\keys\" > KeyUpdate-%dVar%-%cVar%.log{Enter}
 Sleep, 500
@@ -390,7 +393,7 @@ CurrentM := RTicks
 ; dVar := (60-A_Sec) " seconds"
 ; }
 
-DaRT(DartName,DartSayBox,DartSayBoxColor,1)
+DaRT(DartName,DartSayBox,DartConnectButton,DartSayBoxColor,1)
 cVar := "#tms#"
 erp := StrReplace(MessageShutdown, cVar, dVar)
 Send %erp%{Enter}
@@ -410,7 +413,7 @@ WinKill, ahk_id %ffs_id%,,10
 ModWait=0
 SSFlag=0
 Sleep, 15000
-MouseClick, left,  XValue, YValue
+MouseClick, left,  Xsdd, Ysdd
 Sleep, 100
 WinMaximize, ahk_exe %DartName%
 Sleep, 5000
@@ -422,23 +425,24 @@ Sleep, 5000
 }
 else
 {
-msnt := "Â» Restarting Server"
+msnt := "» Restarting Server"
 If SSFlag
 {
-msnt := "Â» Shutdown Server"
+msnt := "» Shutdown Server"
 BlockInput, Off
 }
 TMessage(msnt,Handle)
 If !SSFlag
 {
 Sleep, 15000
-MouseClick, left,  XValue, YValue
+MouseClick, left,  Xsdd, Ysdd
 Sleep, 5000
 Run, "C:\Windows\System32\cmd.exe", ..\
-Sleep, 500
+Sleep, 3000
 WinGet, cmd_id, ID, A
+Sleep, 500
 Send %Startup%{Enter}
-Sleep, 50
+Sleep, 10000
 WinKill, ahk_id %cmd_id%,,10
 ModWait=0
 Sleep, (abs(MinBeforeShutdown-MinimumStartupTime)*60000)
@@ -450,8 +454,12 @@ erp := Xpos "," Ypos
 IniWrite, %erp%, %mini%, Workshop, SpawnPosition
 Sleep 500
 
+; Run, "Start.bat"
+; ExitApp
+
 Reload
 Sleep 1000 ; Restart
+
 }
 }
 }
@@ -470,7 +478,7 @@ Return
 RestartIt:
 ModWait=0
 SSFlag=0
-msnt := "Â» Restarting Server"
+msnt := "» Restarting Server"
 TMessage(msnt,Handle)
 
 Return
@@ -497,7 +505,7 @@ DllCall("HideCaret","Int",Win)
 Return
 }
 
-DaRT(aVar,bVar,Dscolor,IdleMark) {
+DaRT(aVar,bVar,dConnect,Dscolor,IdleMark) {
 KeyCombination:=""
 LineScn := []
 ExcludeKeys := "{Shift Up}{Control Up}{Alt Up}{WheelUp Up}{WheelDown Up}"
@@ -520,6 +528,10 @@ Gdip_GetDimensions(pBitmaps, w, h)
 LineScn := StrSplit(bVar, ",")
 OcX := LineScn[1]
 OcY := LineScn[2]
+
+LineScn := StrSplit(dConnect, ",")
+DcX := LineScn[1]
+DcY := LineScn[2]
 
 ffile := "Pos.png"
 cfile := "HexColorsFound.txt"
@@ -549,8 +561,21 @@ Sleep, 1000
 
 FileDelete, %cfile%
 TabCheck=0
+BCheck=0
+
 While !TabCheck
 {
+If (BCheck > 13)
+{
+If (BCheck > 65)
+TabCheck++
+
+If (BCheck = 14 || BCheck = 27)
+{
+MouseClick, left,  DcX, DcY
+Sleep, 6000
+}
+}
 pBitmaps := Gdip_BitmapFromScreen()
 Gdip_GetDimensions(pBitmaps, w, h)
 pBitmap3 := Gdip_CreateBitmap(w, h), G3 := Gdip_GraphicsFromImage(pBitmap3)
@@ -574,6 +599,7 @@ If (ccnt = 10)
 {
 SendInput {Tab}
 Sleep, 70
+BCheck++
 }
 else
 TabCheck++
