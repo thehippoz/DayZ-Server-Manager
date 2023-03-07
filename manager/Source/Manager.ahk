@@ -1,4 +1,6 @@
 ; DZ Server Manager by Ben Barbre (benbarbre@gmail.com) Jan, 2023
+; Update Mar 6  - Added SavePosition to Mods.ini/filename support.
+; Update Mar 1  - Finished filecopy <removed>
 ; Update Feb 27 - Fixed a bug in update and a time sync issue.
 ; Update Feb 16 - Fixed a problem logging mods with spaces. Works with 1.20
 ; Update Feb 15 - Fixed date bug in mod.ini. Moved some things around.
@@ -19,7 +21,7 @@ filePath := A_ScriptDir "\Configure.ini"
 mini := A_ScriptDir "\Mods.ini"
 
 IniRead, ServerName, %filePath%, General, ServerName
-IniRead, SpawnPosition, %mini%, Workshop, SpawnPosition
+IniRead, SpawnPosition, %mini%, SavePosition, SpawnPosition
 
 Myy := []
 Mee := []
@@ -126,7 +128,6 @@ If !FoundPos
 FoundPos=24
 SDHours[index] := FoundPos
 }
-Hoursin := index
 
 Rtt := StrSplit(ShutDownDialog, ",")
 Xsdd := Rtt[1]
@@ -165,17 +166,13 @@ Dllwait=0
 DllCall("SetThreadExecutionState", UInt,0x80000003 )
 }
 KeptTime := abs(A_TickCount)
-Process, Exist, DayZServer_x64.exe
-
-If (ErrorLevel || (MinimumStartupTime*60000) > (A_TickCount-StartTime))
+If (WinExist("ahk_exe DayZServer_x64.exe") || (MinimumStartupTime*60000) > (A_TickCount-StartTime))
 {
 ShutCheck=0
-jVal := Hoursin+1
-While --jVal
-{
-erp := abs(SDHours[jVal])
 HourHolder := A_Hour+1
-If (HourHolder = erp)
+for index, erp in SDHours
+{
+If (erp+0 = HourHolder)
 ShutCheck=1
 }
 msnt := "» Idle"
@@ -236,7 +233,7 @@ Mtt[Raw] := FoundPos
 
 If !FileExist(mini)
 {
-FileAppend, [Workshop]`nSpawnPosition=`n, %mini%
+FileAppend, [SavePosition]`nSpawnPosition=`n`n[Workshop]`n, %mini%
 Sleep, 5
 msnt := "`n» Create - Mod.ini"
 TMessage(msnt,Handle)
@@ -288,6 +285,12 @@ If (RTicks < (CountdownSeconds*1000)+5000 && CurrentM != Round(Floor(RTicks/1000
 {
 DaRT(DartName,DartSayBox,DartConnectButton,DartSayBoxColor,1)
 dVar := SubStr(Myy[Raw],2,StrLen(Myy[Raw])-1)
+dVar := StrReplace(dVar, "!", "{!}")
+dVar := StrReplace(dVar, "#", "{#}")
+dVar := StrReplace(dVar, "+", "{+}")
+dVar := StrReplace(dVar, "^", "{^}")
+dVar := StrReplace(dVar, "{", "{{}")
+dVar := StrReplace(dVar, "}", "{}}")
 cVar := "#mod#"
 erp := StrReplace(MessageUpdatedMods, cVar, dVar)
 cVar := "#tms#"
@@ -325,7 +328,12 @@ dVar := SubStr(Myy[Raw],2,StrLen(Myy[Raw])-1)
 If !SSFlag
 {
 SetWorkingDir, %SteamFolder%
-dVarS := dVar
+dVarS := StrReplace(dVar, "!", "{!}")
+dVarS := StrReplace(dVarS, "#", "{#}")
+dVarS := StrReplace(dVarS, "+", "{+}")
+dVarS := StrReplace(dVarS, "^", "{^}")
+dVarS := StrReplace(dVarS, "{", "{{}")
+dVarS := StrReplace(dVarS, "}", "{}}")
 dVar := StrReplace(dVar, " ", "_")
 FileName := "ModUpdate-" dVar "-" cVar ".log"
 Sleep, 50
@@ -338,7 +346,7 @@ If (RegExMatch(erp, "Success."))
 IniWrite, %FoundPos%, %mini%, Workshop, %KeyB%
 Sleep, 500
 Run, "C:\Windows\System32\cmd.exe"
-Sleep, 500
+Sleep, 1000
 WinGet, cmd_id, ID, A
 Send move /Y "%SteamFolder%%FileName%" "..\profiles\Update-%dVar%-%cVar%-%rgs%.log"{Enter}
 Sleep, 500
@@ -352,7 +360,7 @@ FileMove RoboUpdate-%dVar%-%cVar%.log, Robocopy-%dVar%-%cVar%.log
 }
 Sleep, 500
 FileAppend, `n`n`nRobocopy -=-=-=-`n`n%erp%, ..\profiles\Update-%dVar%-%cVar%-%rgs%.log
-Send copy /y /v "..\@%dVarS%\Keys\*.bikey" "..\keys\" > KeyUpdate-%dVar%-%cVar%.log{Enter}
+Send copy /B /V /Y "..\@%dVarS%\Keys\*.bikey" "..\keys\" > KeyUpdate-%dVar%-%cVar%.log{Enter}
 Sleep, 500
 FileMove KeyUpdate-%dVar%-%cVar%.log, Keys-%dVar%-%cVar%.log
 While ErrorLevel
@@ -402,6 +410,8 @@ BlockInput, Off
 }
 If RTicks < 1
 {
+DaRT(DartName,DartSayBox,DartConnectButton,DartSayBoxColor,0)
+Sleep, 100
 WinMinimize, ahk_exe %DartName%
 ifWinExist, ahk_exe DayZServer_x64.exe
 {
@@ -416,6 +426,7 @@ Sleep, 15000
 MouseClick, left,  Xsdd, Ysdd
 Sleep, 100
 WinMaximize, ahk_exe %DartName%
+BlockInput, Off
 Sleep, 5000
 }
 }
@@ -435,15 +446,18 @@ TMessage(msnt,Handle)
 If !SSFlag
 {
 Sleep, 15000
+DaRT(DartName,DartSayBox,DartConnectButton,DartSayBoxColor,0)
 MouseClick, left,  Xsdd, Ysdd
+BlockInput, Off
 Sleep, 5000
+DaRT(DartName,DartSayBox,DartConnectButton,DartSayBoxColor,0)
 Run, "C:\Windows\System32\cmd.exe", ..\
-Sleep, 3000
+Sleep, 1000
 WinGet, cmd_id, ID, A
-Sleep, 500
 Send %Startup%{Enter}
 Sleep, 10000
 WinKill, ahk_id %cmd_id%,,10
+BlockInput, Off
 ModWait=0
 Sleep, (abs(MinBeforeShutdown-MinimumStartupTime)*60000)
 
@@ -451,7 +465,7 @@ If !FileExist(mini)
 FileAppend, [Workshop]`n, %mini%
 WinGetPos, Xpos, Ypos,,, %ServerName%
 erp := Xpos "," Ypos
-IniWrite, %erp%, %mini%, Workshop, SpawnPosition
+IniWrite, %erp%, %mini%, SavePosition, SpawnPosition
 Sleep 500
 
 ; Run, "Start.bat"
@@ -489,7 +503,7 @@ FileAppend, [Workshop]`n, %mini%
 Sleep, 5
 WinGetPos, Xpos, Ypos,,, %ServerName%
 erp := Xpos "," Ypos
-IniWrite, %erp%, %mini%, Workshop, SpawnPosition
+IniWrite, %erp%, %mini%, SavePosition, SpawnPosition
 
 ExitApp
 
@@ -568,7 +582,10 @@ While !TabCheck
 If (BCheck > 13)
 {
 If (BCheck > 65)
+{
 TabCheck++
+BlockInput, Off
+}
 
 If (BCheck = 14 || BCheck = 27)
 {
